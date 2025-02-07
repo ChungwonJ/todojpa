@@ -21,7 +21,15 @@ public class Todo extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-
     public Todo() {
+    }
+
+    public Todo(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
