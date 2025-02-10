@@ -21,6 +21,13 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
+    private boolean userChecked(HttpServletRequest request, String todoUsername) {
+        HttpSession session = request.getSession(false);
+        String username = (session != null) ? (String) session.getAttribute("username") : null;
+
+        return username != null && username.equals(todoUsername);
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto requestDto) {
 
@@ -35,9 +42,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SignInResponseDto> findById(@PathVariable Long id) {
+    public ResponseEntity<SignInResponseDto> findById(@PathVariable Long id,HttpServletRequest request) {
 
         SignInResponseDto signInResponseDto = userService.findById(id);
+
+        if (!userChecked(request, signInResponseDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         return new ResponseEntity<>(signInResponseDto, HttpStatus.OK);
     }
@@ -45,8 +56,14 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updatePassword(
             @PathVariable Long id,
-            @RequestBody UpdatePasswordRequestDto requestDto
+            @RequestBody UpdatePasswordRequestDto requestDto,
+            HttpServletRequest request
     ) {
+        SignInResponseDto signInResponseDto = userService.findById(id);
+
+        if (!userChecked(request, signInResponseDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         userService.updatePassword(id, requestDto.getOldPassword(), requestDto.getNewPassword());
 
@@ -54,8 +71,17 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> requestBody,
+            HttpServletRequest request
+    ) {
         String password = requestBody.get("password");
+        SignInResponseDto signInResponseDto = userService.findById(id);
+
+        if (!userChecked(request, signInResponseDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         userService.delete(id, password);
         return new ResponseEntity<>(HttpStatus.OK);

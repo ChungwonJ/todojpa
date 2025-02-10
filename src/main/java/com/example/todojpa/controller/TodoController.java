@@ -19,6 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class TodoController {
     private final TodoService todoService;
 
+    private boolean userChecked(HttpServletRequest request, String todoUsername) {
+        HttpSession session = request.getSession(false);
+        String username = (session != null) ? (String) session.getAttribute("username") : null;
+
+        return username != null && username.equals(todoUsername);
+    }
+
     @PostMapping
     public ResponseEntity<TodoResponseDto> save(
             @RequestBody CreateTodoRequestDto requestDto,
@@ -42,16 +49,28 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TodoResponseDto> findById(@PathVariable Long id) {
+    public ResponseEntity<TodoResponseDto> findById(@PathVariable Long id,HttpServletRequest request) {
         TodoResponseDto todoResponseDto = todoService.findById(id);
+
+        if (!userChecked(request, todoResponseDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         return new ResponseEntity<>(todoResponseDto, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UpdateTodoResponseDto> update(
             @PathVariable Long id,
-            @RequestBody UpdateTodoRequestDto requestDto
+            @RequestBody UpdateTodoRequestDto requestDto,
+            HttpServletRequest request
     ) {
+        TodoResponseDto todoResponseDto = todoService.findById(id);
+
+        if (!userChecked(request, todoResponseDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         UpdateTodoResponseDto updatedTodo = todoService.update(id, requestDto.getPassword(), requestDto.getTitle(), requestDto.getContents());
         return new ResponseEntity<>(updatedTodo, HttpStatus.OK);
     }
@@ -59,8 +78,15 @@ public class TodoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id,
-            @RequestBody DeleteTodoRequestDto requestDto
+            @RequestBody DeleteTodoRequestDto requestDto,
+            HttpServletRequest request
     ) {
+        TodoResponseDto todoResponseDto = todoService.findById(id);
+
+        if (!userChecked(request, todoResponseDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         todoService.delete(id, requestDto.getPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
