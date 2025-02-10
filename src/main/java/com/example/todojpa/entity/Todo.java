@@ -32,5 +32,12 @@ public class Todo extends BaseEntity{
     public void setUser(User user) {
         this.user = user;
     }
-    
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.todojpa.service;
 
 import com.example.todojpa.dto.todo.res.TodoResponseDto;
+import com.example.todojpa.dto.todo.res.UpdateTodoResponseDto;
 import com.example.todojpa.entity.Todo;
 import com.example.todojpa.entity.User;
 import com.example.todojpa.repository.TodoRepository;
@@ -31,5 +32,19 @@ public class TodoService {
         User writer = findTodo.getUser();
 
         return new TodoResponseDto(findTodo.getId(), writer.getUsername(), findTodo.getTitle(), findTodo.getContents());
+    }
+
+    public UpdateTodoResponseDto update(Long id, String password, String title, String contents) {
+        Todo todo = todoRepository.findByIdOrElseThrow(id);
+
+        if (!todo.getUser().getPassword().equals(password)) {
+            throw new RuntimeException("패스워드가 일치하지 않습니다.");
+        }
+
+        todo.setTitle(title);
+        todo.setContents(contents);
+        todoRepository.save(todo);
+
+        return new UpdateTodoResponseDto(todo.getTitle(), todo.getContents());
     }
 }
