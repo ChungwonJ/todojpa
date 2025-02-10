@@ -81,7 +81,7 @@ public class UserController {
     public ResponseEntity<String> getSessionInfo(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            String username = (String) session.getAttribute("sessionKey값");
+            String username = (String) session.getAttribute("username");
             return ResponseEntity.ok("현재 사용자: " + username);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("세션이 존재하지 않습니다.");

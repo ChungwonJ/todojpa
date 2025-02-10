@@ -32,4 +32,5 @@ public class Todo extends BaseEntity{
     public void setUser(User user) {
         this.user = user;
     }
+    
 }

@@ -25,4 +25,11 @@ public class TodoService {
 
         return new TodoResponseDto(todo.getId(),username, todo.getTitle(), todo.getContents());
     }
+
+    public TodoResponseDto findById(Long id) {
+        Todo findTodo = todoRepository.findByIdOrElseThrow(id);
+        User writer = findTodo.getUser();
+
+        return new TodoResponseDto(findTodo.getId(), writer.getUsername(), findTodo.getTitle(), findTodo.getContents());
+    }
 }
