@@ -72,7 +72,7 @@ public class UserController {
         );
 
         HttpSession session = request.getSession();
-        session.setAttribute("sessionKey값", signInResponseDto.getUsername());
+        session.setAttribute("username", signInResponseDto.getUsername());
 
         return new ResponseEntity<>(signInResponseDto, HttpStatus.OK);
     }

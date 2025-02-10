@@ -23,6 +23,6 @@ public class TodoService {
 
         todoRepository.save(todo);
 
-        return new TodoResponseDto(todo.getId(), todo.getTitle(), todo.getContents());
+        return new TodoResponseDto(todo.getId(),username, todo.getTitle(), todo.getContents());
     }
 }
