@@ -1,11 +1,11 @@
 package com.example.todojpa.controller;
 
 import com.example.todojpa.dto.todo.req.CreateTodoRequestDto;
+import com.example.todojpa.dto.todo.req.DeleteTodoRequestDto;
 import com.example.todojpa.dto.todo.req.UpdateTodoRequestDto;
 import com.example.todojpa.dto.todo.res.TodoResponseDto;
 import com.example.todojpa.dto.todo.res.UpdateTodoResponseDto;
 import com.example.todojpa.service.TodoService;
-import com.example.todojpa.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TodoController {
     private final TodoService todoService;
-    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<TodoResponseDto> save(
@@ -55,5 +54,14 @@ public class TodoController {
     ) {
         UpdateTodoResponseDto updatedTodo = todoService.update(id, requestDto.getPassword(), requestDto.getTitle(), requestDto.getContents());
         return new ResponseEntity<>(updatedTodo, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @RequestBody DeleteTodoRequestDto requestDto
+    ) {
+        todoService.delete(id, requestDto.getPassword());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -47,4 +47,16 @@ public class TodoService {
 
         return new UpdateTodoResponseDto(todo.getTitle(), todo.getContents());
     }
+
+    public void delete(Long id, String password) {
+        Todo findTodo = todoRepository.findByIdOrElseThrow(id);
+
+        // 비밀번호 검증
+        if (!findTodo.getUser().getPassword().equals(password)) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // Todo 삭제
+        todoRepository.delete(findTodo);
+    }
 }
