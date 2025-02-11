@@ -11,8 +11,8 @@ public class SignUpRequestDto {
     @NotBlank
     @Size(max = 4, message = "이름은 4자 이하여야합니다.")
     private final String username;
-    @NotBlank(message = "패스워드가 잘못되었습니다.")
 
+    @NotBlank(message = "패스워드가 잘못되었습니다.")
     @Size(min = 6, message = "패스워드는 6자 이상이여야 합니다.")
     private final String password;
 
