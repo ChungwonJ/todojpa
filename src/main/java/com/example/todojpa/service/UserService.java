@@ -1,5 +1,6 @@
 package com.example.todojpa.service;
 
+import com.example.todojpa.config.PasswordEncoder;
 import com.example.todojpa.dto.user.res.SignInResponseDto;
 import com.example.todojpa.dto.user.res.SignUpResponseDto;
 import com.example.todojpa.entity.User;
@@ -16,9 +17,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public SignUpResponseDto signUp(String username, String password, String email) {
-        User user = new User(username, password, email);
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User user = new User(username, encodedPassword, email);
 
         User savedUser = userRepository.save(user);
 
@@ -32,7 +36,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        if (user.getPassword().equals(password)) {
+        if (passwordEncoder.matches(password, user.getPassword())) {
             return new SignInResponseDto(user.getUsername(), user.getEmail());
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password incorrect");
