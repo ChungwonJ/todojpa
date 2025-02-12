@@ -49,12 +49,8 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TodoResponseDto> findById(@PathVariable Long id,HttpServletRequest request) {
+    public ResponseEntity<TodoResponseDto> findById(@PathVariable Long id, HttpServletRequest request) {
         TodoResponseDto todoResponseDto = todoService.findById(id);
-
-        if (!userChecked(request, todoResponseDto.getUsername())) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
 
         return new ResponseEntity<>(todoResponseDto, HttpStatus.OK);
     }
