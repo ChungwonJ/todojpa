@@ -33,13 +33,13 @@ public class UserService {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "아이디가 없습니다");
         }
 
         if (passwordEncoder.matches(password, user.getPassword())) {
             return new SignInResponseDto(user.getUsername(), user.getEmail());
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password incorrect");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "패스워드가 일치하지 않습니다.");
         }
     }
 
@@ -58,20 +58,22 @@ public class UserService {
 
     @Transactional
     public void updatePassword(Long id, String oldPassword, String newPassword) {
-        User findMember = userRepository.findByIdOrElseThrow(id);
+        User findUser = userRepository.findByIdOrElseThrow(id);
 
-        if (!findMember.getPassword().equals(oldPassword)) {
+        if (!passwordEncoder.matches(oldPassword, findUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
-        findMember.updatePassword(newPassword);
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+        findUser.updatePassword(encodedNewPassword);
+        userRepository.save(findUser);
     }
 
     public void delete(Long id, String password) {
         User findUser = userRepository.findByIdOrElseThrow(id);
 
-        if (!findUser.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(password, findUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
         userRepository.delete(findUser);
