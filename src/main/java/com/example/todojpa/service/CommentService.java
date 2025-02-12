@@ -34,13 +34,13 @@ public class CommentService {
         comment.setTodo(todo);
         commentRepository.save(comment);
 
-        return new CommentResponseDto(comment.getId(), username, comment.getContent());
+        return new CommentResponseDto(comment.getId(), username, comment.getContent(),comment.getCreatedAt(),comment.getModifiedAt());
     }
 
     public List<CommentResponseDto> findByTodoId(Long todoId) {
         List<Comment> comments = commentRepository.findByTodoId(todoId);
         return comments.stream()
-                .map(comment -> new CommentResponseDto(comment.getId(), comment.getContent(), comment.getUser().getUsername()))
+                .map(comment -> new CommentResponseDto(comment.getId(), comment.getContent(), comment.getUser().getUsername(),comment.getCreatedAt(),comment.getModifiedAt()))
                 .collect(Collectors.toList());
     }
 
@@ -54,7 +54,7 @@ public class CommentService {
         comment.setContent(requestDto.getContent());
         commentRepository.save(comment);
 
-        return new CommentResponseDto(comment.getId(), username, comment.getContent());
+        return new CommentResponseDto(comment.getId(), username, comment.getContent(),comment.getCreatedAt(),comment.getModifiedAt());
     }
 
     public void deleteComment(Long commentId, String password) {

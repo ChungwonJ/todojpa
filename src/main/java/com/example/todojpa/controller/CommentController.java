@@ -20,6 +20,13 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
+    private boolean userChecked(HttpServletRequest request, String commentUsername) {
+        HttpSession session = request.getSession(false);
+        String username = (session != null) ? (String) session.getAttribute("username") : null;
+
+        return username != null && username.equals(commentUsername);
+    }
+
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable Long todoId,
@@ -45,7 +52,6 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
-            @PathVariable Long id,
             @PathVariable Long commentId,
             @RequestBody UpdateCommentRequestDto requestDto,
             HttpServletRequest request
@@ -63,7 +69,6 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
-            @PathVariable Long todoId,
             @PathVariable Long commentId,
             @RequestBody DeleteCommentRequestDto requestDto,
             HttpServletRequest request

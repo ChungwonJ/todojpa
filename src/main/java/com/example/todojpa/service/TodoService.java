@@ -28,14 +28,14 @@ public class TodoService {
 
         todoRepository.save(todo);
 
-        return new TodoResponseDto(todo.getId(),username, todo.getTitle(), todo.getContents());
+        return new TodoResponseDto(todo.getId(),username, todo.getTitle(), todo.getContents(),todo.getCreatedAt(),todo.getModifiedAt());
     }
 
     public TodoResponseDto findById(Long id) {
         Todo findTodo = todoRepository.findByIdOrElseThrow(id);
         User writer = findTodo.getUser();
 
-        return new TodoResponseDto(findTodo.getId(), writer.getUsername(), findTodo.getTitle(), findTodo.getContents());
+        return new TodoResponseDto(findTodo.getId(), writer.getUsername(), findTodo.getTitle(), findTodo.getContents(),findTodo.getCreatedAt(),findTodo.getModifiedAt());
     }
 
     public UpdateTodoResponseDto update(Long id, String password, String title, String contents) {
@@ -50,7 +50,7 @@ public class TodoService {
         todo.setContents(contents);
         todoRepository.save(todo);
 
-        return new UpdateTodoResponseDto(todo.getTitle(), todo.getContents());
+        return new UpdateTodoResponseDto(todo.getTitle(), todo.getContents(),todo.getCreatedAt(),todo.getModifiedAt());
     }
 
     public void delete(Long id, String password) {

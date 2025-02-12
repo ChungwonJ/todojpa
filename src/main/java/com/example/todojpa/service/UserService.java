@@ -26,7 +26,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        return new SignUpResponseDto(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
+        return new SignUpResponseDto(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(),user.getCreatedAt(),user.getModifiedAt());
     }
 
     public SignInResponseDto login(String email, String password) {
@@ -37,7 +37,7 @@ public class UserService {
         }
 
         if (passwordEncoder.matches(password, user.getPassword())) {
-            return new SignInResponseDto(user.getUsername(), user.getEmail());
+            return new SignInResponseDto(user.getUsername(), user.getEmail(),user.getCreatedAt(),user.getModifiedAt());
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "패스워드가 일치하지 않습니다.");
         }
@@ -53,7 +53,7 @@ public class UserService {
 
         User findUser = optionalMember.get();
 
-        return new SignInResponseDto(findUser.getUsername(), findUser.getEmail());
+        return new SignInResponseDto(findUser.getUsername(), findUser.getEmail(),findUser.getCreatedAt(),findUser.getModifiedAt());
     }
 
     @Transactional
